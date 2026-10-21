@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cute Worms - Game Cacing & Buah Segar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@500;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #13111c;
+      --card-bg: rgba(30, 26, 46, 0.78);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --text-main: #fff5fa;
+      --text-muted: #b9adc7;
+      
+      /* Theme active variables */
+      --theme-primary: #ff6b9d;
+      --theme-secondary: #ffa5c5;
+      --theme-glow: rgba(255, 107, 157, 0.4);
+      --theme-bg-gradient: radial-gradient(circle at 50% 0%, rgba(255, 107, 157, 0.18) 0%, transparent 60%);
+
+      --board-bg: #181424;
+      --btn-bg: #27213c;
+      --btn-hover: #372f52;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      background-image: 
+        var(--theme-bg-gradient),
+        radial-gradient(circle at 80% 85%, rgba(139, 92, 246, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 15% 75%, rgba(244, 114, 182, 0.1) 0%, transparent 40%);
+      color: var(--text-main);
+      font-family: 'Fredoka', 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      overflow-x: hidden;
+      transition: background-image 0.4s ease;
+    }
+
+    .game-wrapper {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-avatar {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 6px 16px var(--theme-glow);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: rotate(-3deg);
+    }
+
+    .logo-avatar:hover {
+      transform: rotate(6deg) scale(1.08);
+    }
+
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      background: linear-gradient(to right, #ffffff, #ffe4ef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.15;
+    }
+
+    .subtitle-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: rgba(255, 107, 157, 0.15);
+      color: var(--theme-primary);
+      border: 1px solid rgba(255, 107, 157, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: var(--btn-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .icon-btn:hover {
+      color: var(--text-main);
+      background: var(--btn-hover);
+      transform: translateY(-2px);
+    }
+
+    .icon-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* Worm Selector Carousel */
+    .skin-selector-wrapper {
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 10px 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .skin-selector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+
+    .skin-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .active-worm-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--theme-primary);
+    }
+
+    .skin-list {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 8px 2px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
+
+    .skin-list::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .skin-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .skin-card {
+      flex: 0 0 auto;
+      width: 68px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 8px 4px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .skin-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .skin-card.active {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--theme-primary);
+      box-shadow: 0 4px 14px var(--theme-glow);
+      transform: scale(1.04);
+    }
+
+    .skin-preview-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s;
+    }
+
+    .skin-card:hover .skin-preview-dot {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .skin-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-main);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 62px;
+    }
+
+    /* Scoreboard & Fresh Fruit Banner */
+    .scoreboard {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .score-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .score-value {
+      font-family: 'Fredoka', 'JetBrains Mono', monospace;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.15;
+    }
+
+    .score-card.primary .score-value {
+      color: var(--theme-primary);
+      text-shadow: 0 0 16px var(--theme-glow);
+    }
+
+    /* Fresh Fruit Target Bar */
+    .fruit-banner {
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .fruit-banner-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .fruit-target-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      animation: fruitBounce 2.5s infinite ease-in-out;
+    }
+
+    .fruit-badge-icon {
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fruit-badge-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes fruitBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px) scale(1.03); }
+    }
+
+    /* Board Area */
+    .board-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: var(--board-bg);
+      border-radius: 24px;
+      padding: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 0 24px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      background: #0f0c1a;
+    }
+
+    /* Overlay (Start, Pause, GameOver) */
+    .overlay {
+      position: absolute;
+      inset: 8px;
+      border-radius: 16px;
+      background: rgba(14, 11, 23, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .overlay-mascot-box {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 8px;
+      animation: floatMascot 2.2s infinite ease-in-out;
+      filter: drop-shadow(0 8px 16px var(--theme-glow));
+    }
+
+    .overlay-mascot-box svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes floatMascot {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(4deg); }
+    }
+
+    .overlay-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+
+    .overlay-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 290px;
+      line-height: 1.4;
+      margin-bottom: 18px;
+    }
+
+    .overlay-stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 22px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .overlay-stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .overlay-stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .overlay-stat-val {
+      font-family: 'Fredoka', 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--theme-secondary);
+    }
+
+    .bouncy-btn {
+      animation: bouncyPulse 2s infinite;
+    }
+
+    @keyframes bouncyPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 16px var(--theme-glow);
+      }
+      50% {
+        transform: scale(1.04);
+        box-shadow: 0 8px 26px var(--theme-glow);
+      }
+    }
+
+    /* Action Controls Bar */
+    .action-bar {
+      width: 100%;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      height: 48px;
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      font-family: 'Fredoka', 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+      color: #ffffff;
+      box-shadow: 0 4px 16px var(--theme-glow);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.08);
+    }
+
+    .btn-secondary {
+      background: var(--btn-bg);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--btn-hover);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Mobile Virtual D-Pad */
+    .mobile-controls {
+      display: none;
+      width: 100%;
+      max-width: 250px;
+      margin-top: 2px;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dpad-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .dpad-btn {
+      width: 66px;
+      height: 52px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      transition: background 0.1s, transform 0.1s;
+    }
+
+    .dpad-btn:active {
+      background: var(--btn-hover);
+      transform: scale(0.92);
+      border-color: var(--theme-primary);
+    }
+
+    .dpad-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    /* Footer hints */
+    .hint-bar {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-family: 'Fredoka', 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: #ffffff;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    @media (hover: none) and (pointer: coarse), (max-width: 640px) {
+      .mobile-controls {
+        display: flex;
+      }
+      .desktop-hint {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-wrapper">
+    <!-- Header -->
+    <header>
+      <div class="title-group">
+        <div id="headerMascot" class="logo-avatar">🍓</div>
+        <div>
+          <h1>Cute Worms</h1>
+          <span class="subtitle-badge">
+            <span>✨</span> <span id="skinBadgeText">Mimi Strawberry</span>
+          </span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="soundToggle" class="icon-btn" title="Toggle Suara" aria-label="Toggle Suara">
+          <svg id="soundIconOn" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+          <svg id="soundIconOff" viewBox="0 0 24 24" style="display: none;">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Worm Selection Carousel -->
+    <div class="skin-selector-wrapper">
+      <div class="skin-selector-header">
+        <span class="skin-label">🐛 Pilih Cacingmu:</span>
+        <span id="activeWormName" class="active-worm-name">Mimi Strawberry</span>
+      </div>
+      <div id="skinList" class="skin-list">
+        <!-- Dynamically rendered skins -->
+      </div>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard">
+      <div class="score-card primary">
+        <span class="score-label">🍎 Skor</span>
+        <span id="currentScore" class="score-value">0</span>
+      </div>
+      <div class="score-card">
+        <span class="score-label">👑 Rekor Terbaik</span>
+        <span id="highScore" class="score-value">0</span>
+      </div>
+    </div>
+
+    <!-- Fresh Fruit Target Banner with Real SVG Graphic Icon -->
+    <div class="fruit-banner">
+      <span class="fruit-banner-title">
+        <span>🥗</span> Target Buah Segar:
+      </span>
+      <span id="currentFruitBadge" class="fruit-target-badge">
+        <span id="fruitBadgeIcon" class="fruit-badge-icon"></span>
+        <span id="fruitBadgeName">Semangka Segar (+10)</span>
+      </span>
+    </div>
+
+    <!-- Board Container -->
+    <div class="board-container">
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+      <!-- Overlay Start / Pause / GameOver -->
+      <div id="gameOverlay" class="overlay active">
+        <div id="overlayMascotBox" class="overlay-mascot-box"></div>
+        <h2 id="overlayTitle" class="overlay-title">Cacing & Buah Segar</h2>
+        <p id="overlaySubtitle" class="overlay-subtitle">Bantu cacing lucu memakan buah-buahan segar bergambar asli!</p>
+        
+        <div id="overlayStats" class="overlay-stats" style="display: none;">
+          <div class="overlay-stat-item">
+            <span class="overlay-stat-label">Skor Kamu</span>
+            <span id="overlayCurrentScore" class="overlay-stat-val">0</span>
+          </div>
+          <div class="overlay-stat-item">
+            <span class="overlay-stat-label">Terbaik</span>
+            <span id="overlayHighScore" class="overlay-stat-val">0</span>
+          </div>
+        </div>
+
+        <button id="overlayActionBtn" class="btn btn-primary bouncy-btn" style="min-width: 180px;">
+          Mulai Main!
+        </button>
+      </div>
+    </div>
+
+    <!-- Controls Toolbar -->
+    <div class="action-bar">
+      <button id="btnStart" class="btn btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <span>Mulai</span>
+      </button>
+      <button id="btnPause" class="btn btn-secondary" disabled>
+        <svg id="pauseIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+        <span id="pauseText">Pause</span>
+      </button>
+      <button id="btnRestart" class="btn btn-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+        <span>Ulangi</span>
+      </button>
+    </div>
+
+    <!-- Mobile Virtual Controls -->
+    <div class="mobile-controls">
+      <div class="dpad-row">
+        <button id="dpadUp" class="dpad-btn" aria-label="Atas">
+          <svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+        </button>
+      </div>
+      <div class="dpad-row">
+        <button id="dpadLeft" class="dpad-btn" aria-label="Kiri">
+          <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+        </button>
+        <button id="dpadDown" class="dpad-btn" aria-label="Bawah">
+          <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+        </button>
+        <button id="dpadRight" class="dpad-btn" aria-label="Kanan">
+          <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hint text -->
+    <div class="hint-bar">
+      <span class="desktop-hint">
+        Kontrol: <span class="kbd">W</span> <span class="kbd">A</span> <span class="kbd">S</span> <span class="kbd">D</span> atau <span class="kbd">&uarr;</span> <span class="kbd">&larr;</span> <span class="kbd">&darr;</span> <span class="kbd">&rarr;</span> &bull; Pause: <span class="kbd">Spasi</span>
+      </span>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // Configuration & Grid Setup
+      const GRID_SIZE = 20; // 20x20
+      const INITIAL_SPEED = 125; // ms per tick
+      const SPEED_INCREMENT = 1.6;
+      const MIN_SPEED = 60;
+
+      // Worm Skins Data
+      const WORM_SKINS = [
+        {
+          id: 'strawberry',
+          name: 'Mimi Berry',
+          emoji: '🍓',
+          desc: 'Cacing Stroberi Manis',
+          primary: '#ff5c93',
+          secondary: '#ff94b9',
+          glow: 'rgba(255, 92, 147, 0.45)',
+          headColor: '#ff4081',
+          bodyColors: ['#ff6599', '#ff7da7', '#ff94b5', '#ffaec4'],
+          cheekColor: '#ff2d75',
+          boardColor: '#171120'
+        },
+        {
+          id: 'matcha',
+          name: 'Mochi Matcha',
+          emoji: '🥑',
+          desc: 'Cacing Alpukat Lembut',
+          primary: '#10b981',
+          secondary: '#6ee7b7',
+          glow: 'rgba(16, 185, 129, 0.45)',
+          headColor: '#10b981',
+          bodyColors: ['#34d399', '#6ee7b7', '#a7f3d0'],
+          cheekColor: '#fb7185',
+          boardColor: '#0e1814'
+        },
+        {
+          id: 'rainbow',
+          name: 'Rainbow Sky',
+          emoji: '🦄',
+          desc: 'Cacing Pelangi Ajaib',
+          primary: '#c084fc',
+          secondary: '#f472b6',
+          glow: 'rgba(192, 132, 252, 0.45)',
+          headColor: '#e879f9',
+          bodyColors: ['#f43f5e', '#fb923c', '#facc15', '#4ade80', '#38bdf8', '#c084fc'],
+          cheekColor: '#f472b6',
+          boardColor: '#161226'
+        },
+        {
+          id: 'bee',
+          name: 'Bubu Bee',
+          emoji: '🐝',
+          desc: 'Cacing Lebah Madu',
+          primary: '#f59e0b',
+          secondary: '#fbbf24',
+          glow: 'rgba(245, 158, 11, 0.45)',
+          headColor: '#fbbf24',
+          bodyColors: ['#f59e0b', '#78350f', '#fbbf24', '#78350f'],
+          cheekColor: '#ea580c',
+          boardColor: '#19150d'
+        },
+        {
+          id: 'taro',
+          name: 'Taro Boba',
+          emoji: '🧋',
+          desc: 'Cacing Boba Manis',
+          primary: '#a855f7',
+          secondary: '#c084fc',
+          glow: 'rgba(168, 85, 247, 0.45)',
+          headColor: '#9333ea',
+          bodyColors: ['#a855f7', '#c084fc', '#d8b4fe'],
+          cheekColor: '#ec4899',
+          boardColor: '#150f24'
+        },
+        {
+          id: 'cotton_candy',
+          name: 'Blueberry Fluff',
+          emoji: '🍬',
+          desc: 'Cacing Permen Kapas',
+          primary: '#38bdf8',
+          secondary: '#818cf8',
+          glow: 'rgba(56, 189, 248, 0.45)',
+          headColor: '#0284c7',
+          bodyColors: ['#38bdf8', '#7dd3fc', '#a5f3fc', '#bae6fd'],
+          cheekColor: '#f472b6',
+          boardColor: '#0c1726'
+        }
+      ];
+
+      // REAL Illustrated Fruit SVGs (Bukan sekadar bulatan warna!)
+      const FRUIT_SVGS = {
+        watermelon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M6 30 A26 26 0 0 0 58 30 Z" fill="#16a34a" stroke="#14532d" stroke-width="2"/><path d="M10 30 A22 22 0 0 0 54 30 Z" fill="#bbf7d0"/><path d="M13 30 A19 19 0 0 0 51 30 Z" fill="#ef4444"/><circle cx="22" cy="36" r="2.2" fill="#0f172a"/><circle cx="32" cy="40" r="2.2" fill="#0f172a"/><circle cx="42" cy="36" r="2.2" fill="#0f172a"/><circle cx="27" cy="43" r="1.8" fill="#0f172a"/><circle cx="37" cy="43" r="1.8" fill="#0f172a"/><path d="M16 32 A16 16 0 0 0 32 46" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/></svg>`,
+        strawberry: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M18 22 C12 34 18 52 32 58 C46 52 52 34 46 22 C42 16 22 16 18 22 Z" fill="#f43f5e"/><path d="M32 6 C32 14 36 17 38 19 C31 15 26 19 23 23 C26 17 19 18 15 21 C22 15 28 15 32 6 Z" fill="#15803d"/><path d="M32 16 C38 14 44 17 48 20 C42 16 37 15 32 16 Z" fill="#22c55e"/><circle cx="25" cy="27" r="1.6" fill="#fef08a"/><circle cx="32" cy="25" r="1.6" fill="#fef08a"/><circle cx="39" cy="27" r="1.6" fill="#fef08a"/><circle cx="28" cy="35" r="1.6" fill="#fef08a"/><circle cx="36" cy="35" r="1.6" fill="#fef08a"/><circle cx="32" cy="44" r="1.6" fill="#fef08a"/><path d="M20 25 C17 32 20 42 26 48" stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.45" stroke-linecap="round"/></svg>`,
+        banana: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M48 10 C50 14 48 17 46 19 C38 27 24 37 14 44 C11 46 8 45 9 42 C14 32 26 18 42 11 Z" fill="#facc15" stroke="#eab308" stroke-width="2"/><path d="M46 11 L50 8 C51 7 53 8 52 10 L48 14 Z" fill="#78350f"/><path d="M9 42 C8 44 7 46 9 48 C11 48 13 46 14 44 Z" fill="#78350f"/><path d="M42 16 C30 24 20 34 16 40" stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.6" stroke-linecap="round"/></svg>`,
+        grapes: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 14 L32 6 C32 6 38 6 36 10" stroke="#78350f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M32 10 C38 8 44 11 43 14 C41 17 36 15 34 11" stroke="#22c55e" stroke-width="2.5" fill="none"/><circle cx="25" cy="22" r="7.5" fill="#8b5cf6"/><circle cx="39" cy="22" r="7.5" fill="#7c3aed"/><circle cx="19" cy="33" r="7.5" fill="#9333ea"/><circle cx="32" cy="32" r="8" fill="#a855f7"/><circle cx="45" cy="33" r="7.5" fill="#7e22ce"/><circle cx="26" cy="43" r="7.5" fill="#9333ea"/><circle cx="38" cy="43" r="7.5" fill="#a855f7"/><circle cx="32" cy="52" r="7" fill="#7c3aed"/><circle cx="30" cy="30" r="2.2" fill="#ffffff" opacity="0.6"/><circle cx="23" cy="20" r="2" fill="#ffffff" opacity="0.6"/><circle cx="36" cy="41" r="2" fill="#ffffff" opacity="0.6"/></svg>`,
+        orange: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 14 C36 6 48 8 46 16 C40 18 34 16 32 14 Z" fill="#22c55e"/><path d="M32 14 L30 10" stroke="#78350f" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="37" r="21" fill="#f97316"/><circle cx="32" cy="37" r="17" fill="#fb923c"/><path d="M32 24 L32 50 M20 31 L44 43 M20 43 L44 31" stroke="#ffedd5" stroke-width="1.8" opacity="0.85"/><circle cx="32" cy="37" r="3" fill="#ffedd5"/><ellipse cx="23" cy="26" rx="5" ry="8" transform="rotate(-35 23 26)" fill="#ffffff" opacity="0.45"/></svg>`,
+        apple_red: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 18 C33 10 38 7 42 6" stroke="#78350f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M34 14 C42 10 46 14 46 14 C46 14 42 19 34 16 Z" fill="#22c55e"/><path d="M32 22 C26 16 14 18 14 30 C14 46 25 57 32 59 C39 57 50 46 50 30 C50 18 38 16 32 22 Z" fill="#ef4444"/><ellipse cx="22" cy="28" rx="4" ry="7" transform="rotate(-20 22 28)" fill="#ffffff" opacity="0.5"/></svg>`,
+        apple_green: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 18 C33 10 38 7 42 6" stroke="#78350f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M34 14 C42 10 46 14 46 14 C46 14 42 19 34 16 Z" fill="#15803d"/><path d="M32 22 C26 16 14 18 14 30 C14 46 25 57 32 59 C39 57 50 46 50 30 C50 18 38 16 32 22 Z" fill="#84cc16"/><ellipse cx="22" cy="28" rx="4" ry="7" transform="rotate(-20 22 28)" fill="#ffffff" opacity="0.55"/></svg>`,
+        pineapple: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 6 C28 14 22 18 19 22 C25 18 32 18 32 18 C32 18 39 18 45 22 C42 18 36 14 32 6 Z" fill="#15803d"/><path d="M32 12 C30 18 26 22 24 24 C30 21 34 21 34 21 C34 21 38 21 40 24 C38 22 34 18 32 12 Z" fill="#22c55e"/><ellipse cx="32" cy="40" rx="16" ry="19" fill="#eab308"/><path d="M22 28 L42 50 M20 38 L36 56 M28 22 L44 40 M42 28 L22 50 M44 38 L28 56 M36 22 L20 40" stroke="#ca8a04" stroke-width="2"/><ellipse cx="24" cy="32" rx="3" ry="5" fill="#ffffff" opacity="0.5"/></svg>`,
+        cherry: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M36 8 C36 8 32 20 22 34 M36 8 C36 8 38 18 44 34" stroke="#65a30d" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M36 8 C44 4 50 8 48 14 C42 14 38 10 36 8 Z" fill="#22c55e"/><circle cx="20" cy="42" r="12" fill="#e11d48"/><circle cx="44" cy="42" r="12" fill="#be123c"/><ellipse cx="16" cy="38" rx="3" ry="5" transform="rotate(-20 16 38)" fill="#ffffff" opacity="0.6"/><ellipse cx="40" cy="38" rx="3" ry="5" transform="rotate(-20 40 38)" fill="#ffffff" opacity="0.6"/></svg>`,
+        avocado: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 10 C24 10 18 20 18 34 C18 48 24 58 32 58 C40 58 46 48 46 34 C46 20 40 10 32 10 Z" fill="#14532d"/><path d="M32 13 C26 13 21 22 21 34 C21 46 26 55 32 55 C38 55 43 46 43 34 C43 22 38 13 32 13 Z" fill="#86efac"/><ellipse cx="32" cy="37" rx="14" ry="15" fill="#bbf7d0"/><circle cx="32" cy="42" r="8.5" fill="#78350f"/><ellipse cx="30" cy="39" rx="2.5" ry="4" transform="rotate(-25 30 39)" fill="#ffffff" opacity="0.45"/></svg>`,
+        lemon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M12 40 C10 36 12 28 20 20 C28 12 36 10 40 12 C46 16 54 26 54 34 C54 44 44 54 34 54 C26 54 16 46 12 40 Z" fill="#fde047" stroke="#eab308" stroke-width="1.8"/><circle cx="12" cy="40" r="3" fill="#ca8a04"/><circle cx="44" cy="14" r="3" fill="#ca8a04"/><path d="M42 12 C48 8 54 12 52 18 C46 18 44 14 42 12 Z" fill="#22c55e"/><ellipse cx="26" cy="28" rx="5" ry="9" transform="rotate(-40 26 28)" fill="#ffffff" opacity="0.6"/></svg>`,
+        peach: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 12 C34 6 42 6 44 12 C38 14 34 14 32 12 Z" fill="#22c55e"/><path d="M32 12 L30 8" stroke="#78350f" stroke-width="2"/><path d="M32 20 C22 14 12 24 14 38 C16 50 26 58 32 58 C38 58 48 50 50 38 C52 24 42 14 32 20 Z" fill="#fb7185"/><path d="M32 20 C30 30 30 46 32 58" stroke="#f43f5e" stroke-width="2" fill="none" opacity="0.6"/><ellipse cx="24" cy="30" rx="4" ry="7" transform="rotate(-25 24 30)" fill="#ffffff" opacity="0.5"/></svg>`
+      };
+
+      // Preload SVG Images into HTMLImageElements for super crisp canvas rendering
+      const PRELOADED_FRUITS = [
+        { id: 'watermelon', name: 'Semangka', color: '#ff3366', svg: FRUIT_SVGS.watermelon, juice: '#ff1744' },
+        { id: 'strawberry', name: 'Stroberi', color: '#ff2a6d', svg: FRUIT_SVGS.strawberry, juice: '#ff0055' },
+        { id: 'banana', name: 'Pisang', color: '#facc15', svg: FRUIT_SVGS.banana, juice: '#eab308' },
+        { id: 'grapes', name: 'Anggur', color: '#a855f7', svg: FRUIT_SVGS.grapes, juice: '#9333ea' },
+        { id: 'orange', name: 'Jeruk', color: '#f97316', svg: FRUIT_SVGS.orange, juice: '#ea580c' },
+        { id: 'apple_red', name: 'Apel Merah', color: '#ef4444', svg: FRUIT_SVGS.apple_red, juice: '#dc2626' },
+        { id: 'apple_green', name: 'Apel Hijau', color: '#84cc16', svg: FRUIT_SVGS.apple_green, juice: '#65a30d' },
+        { id: 'pineapple', name: 'Nanas', color: '#eab308', svg: FRUIT_SVGS.pineapple, juice: '#ca8a04' },
+        { id: 'cherry', name: 'Ceri Manis', color: '#e11d48', svg: FRUIT_SVGS.cherry, juice: '#be123c' },
+        { id: 'avocado', name: 'Alpukat', color: '#10b981', svg: FRUIT_SVGS.avocado, juice: '#059669' },
+        { id: 'lemon', name: 'Lemon', color: '#fde047', svg: FRUIT_SVGS.lemon, juice: '#eab308' },
+        { id: 'peach', name: 'Persik', color: '#fb7185', svg: FRUIT_SVGS.peach, juice: '#f43f5e' }
+      ];
+
+      // Convert SVGs to Image objects
+      PRELOADED_FRUITS.forEach(f => {
+        const img = new Image();
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(f.svg);
+        f.img = img;
+      });
+
+      // Audio System using Web Audio API
+      class CuteAudio {
+        constructor() {
+          this.enabled = true;
+          this.ctx = null;
+        }
+
+        init() {
+          if (!this.ctx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) {
+              this.ctx = new AudioContext();
+            }
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+          }
+        }
+
+        playEat() {
+          if (!this.enabled) return;
+          this.init();
+          if (!this.ctx) return;
+
+          const now = this.ctx.currentTime;
+          const osc1 = this.ctx.createOscillator();
+          const osc2 = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc1.type = 'sine';
+          osc2.type = 'triangle';
+
+          osc1.frequency.setValueAtTime(587.33, now);
+          osc1.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+          osc2.frequency.setValueAtTime(880, now);
+          osc2.frequency.exponentialRampToValueAtTime(1174.66, now + 0.1);
+
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc1.start(now);
+          osc2.start(now);
+          osc1.stop(now + 0.15);
+          osc2.stop(now + 0.15);
+        }
+
+        playGameOver() {
+          if (!this.enabled) return;
+          this.init();
+          if (!this.ctx) return;
+
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.linearRampToValueAtTime(220, now + 0.3);
+
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.35);
+        }
+
+        playTurn() {
+          if (!this.enabled) return;
+          this.init();
+          if (!this.ctx) return;
+
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(392, now);
+          osc.frequency.setValueAtTime(523.25, now + 0.02);
+
+          gain.gain.setValueAtTime(0.04, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.04);
+        }
+      }
+
+      // Particle & Floating Fruit Label System
+      class ParticleSystem {
+        constructor() {
+          this.particles = [];
+          this.floatingTexts = [];
+        }
+
+        burst(x, y, color, count = 12, isHeart = false) {
+          for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 3.8 + 1.2;
+            this.particles.push({
+              x: x,
+              y: y,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              alpha: 1,
+              decay: Math.random() * 0.03 + 0.025,
+              size: Math.random() * 4.5 + 3,
+              color: color,
+              isHeart: isHeart || (Math.random() > 0.5)
+            });
+          }
+        }
+
+        addFloatingText(x, y, text, color) {
+          this.floatingTexts.push({
+            x: x,
+            y: y,
+            text: text,
+            color: color,
+            alpha: 1,
+            vy: -0.65
+          });
+        }
+
+        update() {
+          for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha -= p.decay;
+            if (p.alpha <= 0) {
+              this.particles.splice(i, 1);
+            }
+          }
+
+          for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
+            const t = this.floatingTexts[i];
+            t.y += t.vy;
+            t.alpha -= 0.022;
+            if (t.alpha <= 0) {
+              this.floatingTexts.splice(i, 1);
+            }
+          }
+        }
+
+        draw(ctx, cellSize) {
+          this.particles.forEach(p => {
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle = p.color;
+
+            const px = p.x * cellSize + cellSize / 2;
+            const py = p.y * cellSize + cellSize / 2;
+
+            if (p.isHeart) {
+              const s = p.size * 0.7;
+              ctx.beginPath();
+              ctx.moveTo(px, py + s * 0.7);
+              ctx.bezierCurveTo(px - s, py, px - s, py - s, px, py - s * 0.3);
+              ctx.bezierCurveTo(px + s, py - s, px + s, py, px, py + s * 0.7);
+              ctx.fill();
+            } else {
+              ctx.beginPath();
+              ctx.arc(px, py, p.size, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.restore();
+          });
+
+          this.floatingTexts.forEach(t => {
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, t.alpha);
+            ctx.font = 'bold 13px Fredoka, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 6;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(t.text, t.x * cellSize + cellSize / 2, t.y * cellSize + cellSize / 2);
+            ctx.restore();
+          });
+        }
+
+        clear() {
+          this.particles = [];
+          this.floatingTexts = [];
+        }
+      }
+
+      // States
+      const STATE = {
+        IDLE: 'IDLE',
+        RUNNING: 'RUNNING',
+        PAUSED: 'PAUSED',
+        GAME_OVER: 'GAME_OVER'
+      };
+
+      // Game Controller
+      class CuteSnakeGame {
+        constructor() {
+          this.canvas = document.getElementById('gameCanvas');
+          this.ctx = this.canvas.getContext('2d');
+          this.sound = new CuteAudio();
+          this.particles = new ParticleSystem();
+
+          // Active skin setup
+          const savedSkinId = localStorage.getItem('cute_worm_skin') || 'strawberry';
+          this.activeSkin = WORM_SKINS.find(s => s.id === savedSkinId) || WORM_SKINS[0];
+
+          // Score
+          this.highScore = parseInt(localStorage.getItem('cute_worm_hi') || '0', 10);
+          this.currentScore = 0;
+          this.state = STATE.IDLE;
+
+          // Game loop
+          this.snake = [];
+          this.direction = { x: 1, y: 0 };
+          this.nextDirection = { x: 1, y: 0 };
+          this.lastFruitIndex = -1;
+          this.food = { x: 14, y: 10, item: PRELOADED_FRUITS[0] };
+          this.speed = INITIAL_SPEED;
+          this.lastTick = 0;
+          this.animFrameId = null;
+
+          // UI Elements
+          this.currentScoreEl = document.getElementById('currentScore');
+          this.highScoreEl = document.getElementById('highScore');
+          this.highScoreEl.textContent = this.highScore;
+
+          this.overlay = document.getElementById('gameOverlay');
+          this.overlayMascotBox = document.getElementById('overlayMascotBox');
+          this.overlayTitle = document.getElementById('overlayTitle');
+          this.overlaySubtitle = document.getElementById('overlaySubtitle');
+          this.overlayStats = document.getElementById('overlayStats');
+          this.overlayCurrentScore = document.getElementById('overlayCurrentScore');
+          this.overlayHighScore = document.getElementById('overlayHighScore');
+          this.overlayActionBtn = document.getElementById('overlayActionBtn');
+
+          this.currentFruitBadge = document.getElementById('currentFruitBadge');
+          this.fruitBadgeIcon = document.getElementById('fruitBadgeIcon');
+          this.fruitBadgeName = document.getElementById('fruitBadgeName');
+
+          this.btnStart = document.getElementById('btnStart');
+          this.btnPause = document.getElementById('btnPause');
+          this.btnRestart = document.getElementById('btnRestart');
+          this.pauseText = document.getElementById('pauseText');
+
+          this.soundToggle = document.getElementById('soundToggle');
+          this.soundIconOn = document.getElementById('soundIconOn');
+          this.soundIconOff = document.getElementById('soundIconOff');
+
+          this.headerMascot = document.getElementById('headerMascot');
+          this.skinBadgeText = document.getElementById('skinBadgeText');
+          this.activeWormName = document.getElementById('activeWormName');
+          this.skinList = document.getElementById('skinList');
+
+          this.initSkinsUI();
+          this.applySkinTheme();
+          this.initCanvasSize();
+          this.resetGameData();
+          this.bindEvents();
+          this.render();
+        }
+
+        initSkinsUI() {
+          this.skinList.innerHTML = '';
+          WORM_SKINS.forEach(skin => {
+            const card = document.createElement('div');
+            card.className = `skin-card ${skin.id === this.activeSkin.id ? 'active' : ''}`;
+            card.dataset.id = skin.id;
+
+            card.innerHTML = `
+              <div class="skin-preview-dot" style="background: linear-gradient(135deg, ${skin.primary}, ${skin.secondary});">
+                ${skin.emoji}
+              </div>
+              <span class="skin-name">${skin.name}</span>
+            `;
+
+            card.addEventListener('click', () => {
+              this.setSkin(skin);
+            });
+
+            this.skinList.appendChild(card);
+          });
+        }
+
+        setSkin(skin) {
+          this.activeSkin = skin;
+          localStorage.setItem('cute_worm_skin', skin.id);
+
+          const cards = this.skinList.querySelectorAll('.skin-card');
+          cards.forEach(c => {
+            if (c.dataset.id === skin.id) c.classList.add('active');
+            else c.classList.remove('active');
+          });
+
+          this.applySkinTheme();
+          this.sound.playTurn();
+          this.render();
+        }
+
+        applySkinTheme() {
+          const root = document.documentElement;
+          root.style.setProperty('--theme-primary', this.activeSkin.primary);
+          root.style.setProperty('--theme-secondary', this.activeSkin.secondary);
+          root.style.setProperty('--theme-glow', this.activeSkin.glow);
+          root.style.setProperty('--board-bg', this.activeSkin.boardColor);
+          root.style.setProperty('--theme-bg-gradient', `radial-gradient(circle at 50% 0%, ${this.activeSkin.primary}26 0%, transparent 60%)`);
+
+          this.headerMascot.textContent = this.activeSkin.emoji;
+          this.skinBadgeText.textContent = this.activeSkin.name;
+          this.activeWormName.textContent = `${this.activeSkin.name} (${this.activeSkin.emoji})`;
+        }
+
+        initCanvasSize() {
+          const dpr = window.devicePixelRatio || 1;
+          const size = 400;
+          this.canvas.width = size * dpr;
+          this.canvas.height = size * dpr;
+          this.ctx.scale(dpr, dpr);
+          this.virtualSize = size;
+          this.cellSize = size / GRID_SIZE;
+        }
+
+        resetGameData() {
+          const startY = Math.floor(GRID_SIZE / 2);
+          this.snake = [
+            { x: 5, y: startY },
+            { x: 4, y: startY },
+            { x: 3, y: startY }
+          ];
+          this.direction = { x: 1, y: 0 };
+          this.nextDirection = { x: 1, y: 0 };
+          this.currentScore = 0;
+          this.speed = INITIAL_SPEED;
+          this.currentScoreEl.textContent = '0';
+          this.particles.clear();
+          this.spawnFood();
+        }
+
+        spawnFood() {
+          let valid = false;
+          let newFood = { x: 0, y: 0 };
+          while (!valid) {
+            newFood.x = Math.floor(Math.random() * GRID_SIZE);
+            newFood.y = Math.floor(Math.random() * GRID_SIZE);
+            valid = !this.snake.some(segment => segment.x === newFood.x && segment.y === newFood.y);
+          }
+
+          // Pick a fresh colorful fruit that is DIFFERENT from the previous one
+          let newIndex;
+          do {
+            newIndex = Math.floor(Math.random() * PRELOADED_FRUITS.length);
+          } while (newIndex === this.lastFruitIndex && PRELOADED_FRUITS.length > 1);
+
+          this.lastFruitIndex = newIndex;
+          const fruit = PRELOADED_FRUITS[newIndex];
+          this.food = { ...newFood, item: fruit };
+
+          // Update banner with REAL SVG Graphic Icon
+          if (this.fruitBadgeIcon && this.fruitBadgeName) {
+            this.fruitBadgeIcon.innerHTML = fruit.svg;
+            this.fruitBadgeName.textContent = `${fruit.name} Segar (+10)`;
+            this.currentFruitBadge.style.borderColor = fruit.color;
+            this.currentFruitBadge.style.boxShadow = `0 2px 10px ${fruit.color}55`;
+          }
+
+          // Update overlay mascot
+          if (this.overlayMascotBox) {
+            this.overlayMascotBox.innerHTML = fruit.svg;
+          }
+        }
+
+        startGame() {
+          this.sound.init();
+          if (this.state === STATE.GAME_OVER || this.state === STATE.IDLE) {
+            this.resetGameData();
+          }
+          this.state = STATE.RUNNING;
+          this.updateUiState();
+          this.lastTick = performance.now();
+          if (!this.animFrameId) {
+            this.animFrameId = requestAnimationFrame(this.gameLoop.bind(this));
+          }
+        }
+
+        pauseGame() {
+          if (this.state === STATE.RUNNING) {
+            this.state = STATE.PAUSED;
+            this.updateUiState();
+          }
+        }
+
+        resumeGame() {
+          if (this.state === STATE.PAUSED) {
+            this.state = STATE.RUNNING;
+            this.updateUiState();
+            this.lastTick = performance.now();
+          }
+        }
+
+        togglePause() {
+          if (this.state === STATE.RUNNING) {
+            this.pauseGame();
+          } else if (this.state === STATE.PAUSED) {
+            this.resumeGame();
+          }
+        }
+
+        restartGame() {
+          this.resetGameData();
+          this.startGame();
+        }
+
+        gameOver() {
+          this.state = STATE.GAME_OVER;
+          this.sound.playGameOver();
+
+          if (this.snake.length > 0) {
+            this.particles.burst(this.snake[0].x, this.snake[0].y, this.activeSkin.primary, 22, true);
+          }
+
+          if (this.currentScore > this.highScore) {
+            this.highScore = this.currentScore;
+            localStorage.setItem('cute_worm_hi', this.highScore.toString());
+            this.highScoreEl.textContent = this.highScore;
+          }
+
+          this.updateUiState();
+        }
+
+        updateUiState() {
+          if (this.state === STATE.RUNNING) {
+            this.overlay.classList.remove('active');
+            this.btnStart.disabled = true;
+            this.btnPause.disabled = false;
+            this.pauseText.textContent = 'Pause';
+          } else if (this.state === STATE.PAUSED) {
+            this.overlayTitle.textContent = 'Game Dijeda ⏸️';
+            this.overlaySubtitle.textContent = 'Istirahat sejenak! Tekan lanjutkan atau spasi untuk bermain lagi.';
+            this.overlayStats.style.display = 'none';
+            this.overlayActionBtn.textContent = 'Lanjutkan';
+            this.overlay.classList.add('active');
+
+            this.btnStart.disabled = false;
+            this.btnPause.disabled = false;
+            this.pauseText.textContent = 'Lanjut';
+          } else if (this.state === STATE.GAME_OVER) {
+            this.overlayTitle.textContent = 'Aww, Menabrak! 🥺';
+            this.overlaySubtitle.textContent = `Cacing ${this.activeSkin.name} butuh istirahat! Ayo kumpulkan lebih banyak buah segar lagi!`;
+            this.overlayCurrentScore.textContent = this.currentScore;
+            this.overlayHighScore.textContent = this.highScore;
+            this.overlayStats.style.display = 'flex';
+            this.overlayActionBtn.textContent = 'Main Lagi! 🚀';
+            this.overlay.classList.add('active');
+
+            this.btnStart.disabled = false;
+            this.btnPause.disabled = true;
+            this.pauseText.textContent = 'Pause';
+          } else if (this.state === STATE.IDLE) {
+            this.overlayTitle.textContent = 'Cacing & Buah Segar 🍓';
+            this.overlaySubtitle.textContent = 'Bantu cacing lucu memakan aneka buah-buahan segar bergambar asli!';
+            this.overlayStats.style.display = 'none';
+            this.overlayActionBtn.textContent = 'Mulai Main! ✨';
+            this.overlay.classList.add('active');
+
+            this.btnStart.disabled = false;
+            this.btnPause.disabled = true;
+            this.pauseText.textContent = 'Pause';
+          }
+        }
+
+        setDirection(x, y) {
+          if (this.direction.x + x === 0 && this.direction.y + y === 0) {
+            return;
+          }
+          if (this.nextDirection.x !== x || this.nextDirection.y !== y) {
+            this.sound.playTurn();
+          }
+          this.nextDirection = { x, y };
+        }
+
+        step() {
+          this.direction = { ...this.nextDirection };
+          const head = this.snake[0];
+          const newHead = {
+            x: head.x + this.direction.x,
+            y: head.y + this.direction.y
+          };
+
+          // Wall Collision
+          if (
+            newHead.x < 0 ||
+            newHead.x >= GRID_SIZE ||
+            newHead.y < 0 ||
+            newHead.y >= GRID_SIZE
+          ) {
+            this.gameOver();
+            return;
+          }
+
+          // Self Collision
+          for (let i = 0; i < this.snake.length; i++) {
+            if (this.snake[i].x === newHead.x && this.snake[i].y === newHead.y) {
+              this.gameOver();
+              return;
+            }
+          }
+
+          this.snake.unshift(newHead);
+
+          // Fruit Collision
+          if (newHead.x === this.food.x && newHead.y === this.food.y) {
+            this.currentScore += 10;
+            this.currentScoreEl.textContent = this.currentScore;
+            if (this.currentScore > this.highScore) {
+              this.highScore = this.currentScore;
+              this.highScoreEl.textContent = this.highScore;
+            }
+            this.sound.playEat();
+
+            // Fruit juice burst & floating text
+            const fruit = this.food.item;
+            this.particles.burst(this.food.x, this.food.y, fruit.juice || fruit.color, 18, true);
+            this.particles.addFloatingText(this.food.x, this.food.y, `+10 ${fruit.name}`, fruit.color);
+
+            this.speed = Math.max(MIN_SPEED, this.speed - SPEED_INCREMENT);
+            this.spawnFood();
+          } else {
+            this.snake.pop();
+          }
+        }
+
+        gameLoop(currentTime) {
+          if (this.state === STATE.RUNNING) {
+            if (currentTime - this.lastTick >= this.speed) {
+              this.step();
+              this.lastTick = currentTime;
+            }
+          }
+          this.particles.update();
+          this.render();
+          this.animFrameId = requestAnimationFrame(this.gameLoop.bind(this));
+        }
+
+        render() {
+          const ctx = this.ctx;
+          const cs = this.cellSize;
+          const vs = this.virtualSize;
+          const skin = this.activeSkin;
+
+          // Clear background
+          ctx.fillStyle = skin.boardColor || '#140f21';
+          ctx.fillRect(0, 0, vs, vs);
+
+          // Soft polka-dot grid pattern
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+          for (let x = 0; x < GRID_SIZE; x++) {
+            for (let y = 0; y < GRID_SIZE; y++) {
+              ctx.beginPath();
+              ctx.arc(x * cs + cs / 2, y * cs + cs / 2, 1.8, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+
+          // Draw REAL Illustrated Fruit Graphic (Bukan bulatan kosong!)
+          const time = performance.now() * 0.005;
+          const bounce = Math.sin(time * 1.6) * 2.2;
+          const fx = this.food.x * cs + cs / 2;
+          const fy = this.food.y * cs + cs / 2 + bounce;
+          const fruit = this.food.item;
+
+          // 1. Soft Floor Shadow beneath the fruit
+          ctx.save();
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
+          ctx.beginPath();
+          ctx.ellipse(fx, fy + cs * 0.42, cs * 0.38, cs * 0.16, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // 2. Draw actual SVG Fruit Image Sprite
+          const fruitSize = cs * 1.45; // 29px crisp fruit graphic!
+          if (fruit.img && fruit.img.complete) {
+            ctx.save();
+            ctx.shadowColor = fruit.color;
+            ctx.shadowBlur = 10;
+            ctx.drawImage(fruit.img, fx - fruitSize / 2, fy - fruitSize / 2, fruitSize, fruitSize);
+            ctx.restore();
+          }
+
+          // Draw Particles & Floating Labels
+          this.particles.draw(ctx, cs);
+
+          // Draw Illustrated Cute Worm Character
+          const len = this.snake.length;
+          for (let i = len - 1; i >= 0; i--) {
+            const seg = this.snake[i];
+            const px = seg.x * cs;
+            const py = seg.y * cs;
+            const isHead = (i === 0);
+
+            ctx.save();
+            if (isHead) {
+              // Worm Head: Round & Chubby character with animated chomping mouth
+              const hx = px + cs / 2;
+              const hy = py + cs / 2;
+
+              // Rotation based on movement direction
+              let angle = 0;
+              if (this.direction.x === 1) angle = 0;
+              else if (this.direction.x === -1) angle = Math.PI;
+              else if (this.direction.y === 1) angle = Math.PI / 2;
+              else if (this.direction.y === -1) angle = -Math.PI / 2;
+
+              ctx.translate(hx, hy);
+              ctx.rotate(angle);
+
+              // Calculate distance to fruit for hungry/excited mouth animation
+              const distToFruit = Math.hypot(this.snake[0].x - this.food.x, this.snake[0].y - this.food.y);
+              const isCloseToFruit = (distToFruit <= 3.5);
+
+              // Chomping animation cycle: opens and shuts rhythmically, opens extra wide near fruit!
+              const chompSpeed = isCloseToFruit ? 0.022 : 0.012;
+              const mouthCycle = (Math.sin(performance.now() * chompSpeed) + 1) / 2; // 0 to 1
+              const maxOpen = isCloseToFruit ? 0.44 : 0.28;
+              const minOpen = isCloseToFruit ? 0.12 : 0.03;
+              const openAngle = minOpen + mouthCycle * (maxOpen - minOpen);
+
+              // Head Glow & Base Shape with Chomping Mouth Opening
+              ctx.shadowColor = skin.glow;
+              ctx.shadowBlur = 12;
+              ctx.fillStyle = skin.headColor;
+
+              const headRadius = cs * 0.46;
+              ctx.beginPath();
+              ctx.arc(0, 0, headRadius, openAngle, Math.PI * 2 - openAngle);
+              ctx.lineTo(0, 0);
+              ctx.closePath();
+              ctx.fill();
+
+              // Inside mouth cavity (dark red/crimson)
+              if (openAngle > 0.04) {
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#6b0726';
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, headRadius - 1.5, -openAngle * 0.95, openAngle * 0.95);
+                ctx.closePath();
+                ctx.fill();
+
+                // Cute pink tongue wiggling inside mouth
+                const tongueWiggle = Math.sin(performance.now() * 0.015) * 1.2;
+                ctx.fillStyle = '#f472b6';
+                ctx.beginPath();
+                ctx.ellipse(headRadius * 0.45, tongueWiggle, headRadius * 0.38, Math.max(2, headRadius * openAngle * 0.65), 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cute tiny white teeth when mouth opens wide near fruit
+                if (isCloseToFruit && openAngle > 0.16) {
+                  ctx.fillStyle = '#ffffff';
+                  ctx.beginPath();
+                  ctx.arc(headRadius * 0.72, -openAngle * headRadius * 0.55, 1.8, 0, Math.PI * 2);
+                  ctx.arc(headRadius * 0.72, openAngle * headRadius * 0.55, 1.8, 0, Math.PI * 2);
+                  ctx.fill();
+                }
+              }
+
+              // Cute Antennae on top-back
+              ctx.fillStyle = skin.secondary;
+              const antR = cs * 0.13;
+              const antBob = Math.sin(performance.now() * 0.01) * 1.5;
+              ctx.beginPath();
+              ctx.arc(-cs * 0.22, -cs * 0.28 + antBob, antR, 0, Math.PI * 2);
+              ctx.arc(-cs * 0.22, cs * 0.28 - antBob, antR, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Rosy Blush Cheeks
+              ctx.shadowBlur = 0;
+              ctx.fillStyle = skin.cheekColor || '#ff4081';
+              ctx.globalAlpha = 0.6;
+              const blushR = cs * 0.12;
+              ctx.beginPath();
+              ctx.arc(-cs * 0.02, -cs * 0.3, blushR, 0, Math.PI * 2);
+              ctx.arc(-cs * 0.02, cs * 0.3, blushR, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.globalAlpha = 1.0;
+
+              // Big Anime Eyes with Excited Sparkles
+              const eyeX = cs * 0.08;
+              const eyeY = cs * 0.24;
+              const eyeR = isCloseToFruit ? cs * 0.17 : cs * 0.15;
+
+              ctx.fillStyle = '#0f172a';
+              ctx.beginPath();
+              ctx.arc(eyeX, -eyeY, eyeR, 0, Math.PI * 2);
+              ctx.arc(eyeX, eyeY, eyeR, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Big sparkle catchlights
+              ctx.fillStyle = '#ffffff';
+              ctx.beginPath();
+              ctx.arc(eyeX + 1, -eyeY - 1, eyeR * 0.5, 0, Math.PI * 2);
+              ctx.arc(eyeX + 1, eyeY - 1, eyeR * 0.5, 0, Math.PI * 2);
+              ctx.fill();
+
+              ctx.beginPath();
+              ctx.arc(eyeX - 1.2, -eyeY + 1.5, eyeR * 0.24, 0, Math.PI * 2);
+              ctx.arc(eyeX - 1.2, eyeY + 1.5, eyeR * 0.24, 0, Math.PI * 2);
+              ctx.fill();
+            } else {
+              // Body Segments: Cute plump cushion segments with gloss
+              const palette = skin.bodyColors;
+              const color = palette[(i - 1) % palette.length];
+              ctx.fillStyle = color;
+
+              const pad = 1.8;
+              const radius = Math.max(5, cs * 0.42);
+              ctx.beginPath();
+              ctx.roundRect(px + pad, py + pad, cs - pad * 2, cs - pad * 2, radius);
+              ctx.fill();
+
+              // 3D Soft Light reflection on body segment
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+              ctx.beginPath();
+              ctx.arc(px + cs * 0.36, py + cs * 0.36, cs * 0.14, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.restore();
+          }
+        }
+
+        bindEvents() {
+          window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+
+            if (key === 'arrowup' || key === 'w') {
+              e.preventDefault();
+              if (this.state === STATE.RUNNING) this.setDirection(0, -1);
+            } else if (key === 'arrowdown' || key === 's') {
+              e.preventDefault();
+              if (this.state === STATE.RUNNING) this.setDirection(0, 1);
+            } else if (key === 'arrowleft' || key === 'a') {
+              e.preventDefault();
+              if (this.state === STATE.RUNNING) this.setDirection(-1, 0);
+            } else if (key === 'arrowright' || key === 'd') {
+              e.preventDefault();
+              if (this.state === STATE.RUNNING) this.setDirection(1, 0);
+            } else if (key === ' ') {
+              e.preventDefault();
+              if (this.state === STATE.RUNNING || this.state === STATE.PAUSED) {
+                this.togglePause();
+              } else if (this.state === STATE.IDLE || this.state === STATE.GAME_OVER) {
+                this.startGame();
+              }
+            }
+          });
+
+          this.btnStart.addEventListener('click', () => {
+            if (this.state === STATE.PAUSED) {
+              this.resumeGame();
+            } else {
+              this.startGame();
+            }
+          });
+
+          this.btnPause.addEventListener('click', () => {
+            this.togglePause();
+          });
+
+          this.btnRestart.addEventListener('click', () => {
+            this.restartGame();
+          });
+
+          this.overlayActionBtn.addEventListener('click', () => {
+            if (this.state === STATE.PAUSED) {
+              this.resumeGame();
+            } else {
+              this.startGame();
+            }
+          });
+
+          this.soundToggle.addEventListener('click', () => {
+            this.sound.enabled = !this.sound.enabled;
+            if (this.sound.enabled) {
+              this.soundIconOn.style.display = 'block';
+              this.soundIconOff.style.display = 'none';
+              this.sound.playEat();
+            } else {
+              this.soundIconOn.style.display = 'none';
+              this.soundIconOff.style.display = 'block';
+            }
+          });
+
+          const setupDpad = (id, dx, dy) => {
+            const btn = document.getElementById(id);
+            const trigger = (e) => {
+              e.preventDefault();
+              if (this.state === STATE.RUNNING) {
+                this.setDirection(dx, dy);
+              }
+            };
+            btn.addEventListener('touchstart', trigger, { passive: false });
+            btn.addEventListener('mousedown', trigger);
+          };
+
+          setupDpad('dpadUp', 0, -1);
+          setupDpad('dpadDown', 0, 1);
+          setupDpad('dpadLeft', -1, 0);
+          setupDpad('dpadRight', 1, 0);
+
+          let touchStartX = 0;
+          let touchStartY = 0;
+          this.canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+              touchStartX = e.touches[0].clientX;
+              touchStartY = e.touches[0].clientY;
+            }
+          }, { passive: true });
+
+          this.canvas.addEventListener('touchmove', (e) => {
+            if (this.state === STATE.RUNNING) {
+              e.preventDefault();
+            }
+          }, { passive: false });
+
+          this.canvas.addEventListener('touchend', (e) => {
+            if (e.changedTouches.length === 0) return;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            const minSwipe = 22;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+              if (Math.abs(dx) > minSwipe) {
+                if (dx > 0) this.setDirection(1, 0);
+                else this.setDirection(-1, 0);
+              }
+            } else {
+              if (Math.abs(dy) > minSwipe) {
+                if (dy > 0) this.setDirection(0, 1);
+                else this.setDirection(0, -1);
+              }
+            }
+          }, { passive: true });
+
+          window.addEventListener('resize', () => {
+            this.initCanvasSize();
+            this.render();
+          });
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        new CuteSnakeGame();
+      });
+    })();
+  </script>
+</body>
+</html>
