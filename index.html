@@ -2540,11 +2540,12 @@
 
           const heightData = new Float32Array(turfSize * turfSize);
 
-          // A. Fresh Spring Emerald botanical lawn base (Vibrant & lush, no dark seam tones)
+          // A. Rich Vibrant Emerald Garden Turf Base (Intensely Greener, Fresh, & Sunlit)
           const gGrad = gctx.createLinearGradient(0, 0, turfSize, turfSize);
-          gGrad.addColorStop(0.0, '#1cb852'); // Bright vibrant chlorophyll
-          gGrad.addColorStop(0.5, '#16a34a'); // Fresh English lawn green
-          gGrad.addColorStop(1.0, '#15803d'); // Balanced natural meadow green
+          gGrad.addColorStop(0.0, '#22c55e'); // Vivid spring emerald
+          gGrad.addColorStop(0.35, '#16a34a'); // Lush chlorophyll meadow
+          gGrad.addColorStop(0.7, '#15803d'); // Rich deep turf
+          gGrad.addColorStop(1.0, '#166534'); // Royal garden green
           gctx.fillStyle = gGrad;
           gctx.fillRect(0, 0, turfSize, turfSize);
 
@@ -2560,11 +2561,11 @@
 
           // B. Soft Velvet Micro-Dapples & Cushions (Pure soft circles, ZERO lines or strokes)
           const clumpTones = [
-            'rgba(34, 197, 94, 0.35)',   // Spring emerald
-            'rgba(74, 222, 128, 0.28)',  // Fresh sunlit green
-            'rgba(22, 163, 74, 0.32)',   // Lush grass
-            'rgba(52, 211, 153, 0.22)',  // Minty freshness
-            'rgba(163, 230, 53, 0.18)'   // Warm lime highlight
+            'rgba(34, 197, 94, 0.48)',   // Vibrant emerald green
+            'rgba(74, 222, 128, 0.40)',  // Bright sunlit foliage
+            'rgba(22, 163, 74, 0.42)',   // Deep fresh grass
+            'rgba(52, 211, 153, 0.30)',  // Minty freshness
+            'rgba(163, 230, 53, 0.25)'   // Lime-sunlight warmth
           ];
 
           const numClumps = 320;
@@ -2576,7 +2577,7 @@
             // Albedo soft radial grass patch
             const cGrad = gctx.createRadialGradient(cx, cy, 2, cx, cy, radius);
             cGrad.addColorStop(0.0, clumpTones[c % clumpTones.length]);
-            cGrad.addColorStop(0.7, 'rgba(34, 197, 94, 0.12)');
+            cGrad.addColorStop(0.7, 'rgba(34, 197, 94, 0.16)');
             cGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
             gctx.fillStyle = cGrad;
             gctx.beginPath();
@@ -2622,13 +2623,13 @@
           }
 
           // C. Micro-Velvet Cellular Flecks (Soft circular dapples, absolutely no linear strokes)
-          const fleckTones = ['#4ade80', '#22c55e', '#86efac', '#16a34a'];
+          const fleckTones = ['#22c55e', '#4ade80', '#16a34a', '#86efac', '#15803d'];
           for (let f = 0; f < 2500; f++) {
             const fx = Math.random() * turfSize;
             const fy = Math.random() * turfSize;
             const fr = 1.0 + Math.random() * 2.2;
             gctx.fillStyle = fleckTones[Math.floor(Math.random() * fleckTones.length)];
-            gctx.globalAlpha = 0.25 + Math.random() * 0.25;
+            gctx.globalAlpha = 0.28 + Math.random() * 0.28;
             gctx.beginPath();
             gctx.arc(fx, fy, fr, 0, Math.PI * 2);
             gctx.fill();
@@ -2729,13 +2730,14 @@
 
           const lawnMat = new THREE.MeshStandardMaterial({
             map: lawnTexture,
+            color: 0x86efac, // Vibrant spring chlorophyll multiplier tint for an intensely fresh green lawn
             normalMap: lawnNormalTexture,
-            normalScale: new THREE.Vector2(0.18, 0.18), // Ultra-soft velvety sheen
+            normalScale: new THREE.Vector2(0.15, 0.15), // Ultra-soft velvety sheen
             roughnessMap: lawnRoughTexture,
-            roughness: 0.55,
-            metalness: 0.02,
+            roughness: 0.50,
+            metalness: 0.01,
             aoMap: lawnAoTexture,
-            aoMapIntensity: 0.35
+            aoMapIntensity: 0.28
           });
           const lawn = new THREE.Mesh(lawnGeom, lawnMat);
           lawn.position.y = -0.5;
@@ -4154,32 +4156,11 @@
             this.segmentsGroup.remove(seg);
           }
 
-          // Update lucky tail rattle / fluffy bell ornament on the very last segment
-          this.segmentMeshes.forEach((seg, i) => {
+          // Bersihkan tailOrnament agar buntut tidak lagi dobel (murni ekor tunggal yang rapi)
+          this.segmentMeshes.forEach(seg => {
             if (seg.userData.tailOrnament) {
               seg.remove(seg.userData.tailOrnament);
               seg.userData.tailOrnament = null;
-            }
-            if (i === this.segmentMeshes.length - 1 && this.segmentMeshes.length > 0) {
-              const tailGroup = new THREE.Group();
-              const tailRadius = seg.userData.mainMesh ? seg.userData.mainMesh.geometry.parameters.radius : 0.25;
-
-              // Golden Lucky Bell Rattle with Ring
-              const rattleMat = new THREE.MeshStandardMaterial({
-                color: 0xfbbf24,
-                metalness: 0.82,
-                roughness: 0.2
-              });
-              const bell = new THREE.Mesh(new THREE.SphereGeometry(tailRadius * 0.68, 12, 12), rattleMat);
-              bell.position.set(-tailRadius * 0.95, 0, 0);
-              tailGroup.add(bell);
-
-              const bellRing = new THREE.Mesh(new THREE.TorusGeometry(tailRadius * 0.52, 0.024, 6, 12), rattleMat);
-              bellRing.position.set(-tailRadius * 0.95, 0, 0);
-              tailGroup.add(bellRing);
-
-              seg.add(tailGroup);
-              seg.userData.tailOrnament = tailGroup;
             }
           });
 
@@ -4680,12 +4661,6 @@
                 const footCycle = Math.sin(currentTime * 0.018 * 8 + i * 1.2) * 0.15;
                 if (segMesh.userData.leftFoot) segMesh.userData.leftFoot.position.x = footCycle;
                 if (segMesh.userData.rightFoot) segMesh.userData.rightFoot.position.x = -footCycle;
-
-                // Cute Tail Bell Rattle Fluttering on last segment
-                if (segMesh.userData.tailOrnament) {
-                  segMesh.userData.tailOrnament.rotation.y = Math.sin(currentTime * 0.024) * 0.42;
-                  segMesh.userData.tailOrnament.rotation.z = Math.cos(currentTime * 0.02) * 0.22;
-                }
               }
             }
           }
