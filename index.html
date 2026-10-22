@@ -2516,8 +2516,8 @@
           // 7. Floating Garden Island (AAA Photoreal PBR Meadow + Layered Earth Strata)
           this.islandGroup = new THREE.Group();
 
-          // --- Lush Botanical Storybook Meadow Grass (Velvety, Soft, & Richly Textured) ---
-          const turfSize = 512;
+          // --- Lush Botanical Storybook Meadow Grass (Seamless Soft Velvet, Vibrantly Greener, Zero Lines) ---
+          const turfSize = 1024;
           const gCanvas = document.createElement('canvas');
           gCanvas.width = turfSize;
           gCanvas.height = turfSize;
@@ -2540,43 +2540,43 @@
 
           const heightData = new Float32Array(turfSize * turfSize);
 
-          // A. Deep emerald nutrient-rich botanical base
-          const gGrad = gctx.createRadialGradient(256, 256, 30, 256, 256, 360);
-          gGrad.addColorStop(0.0, '#15803d'); // Fresh emerald center
-          gGrad.addColorStop(0.45, '#166534'); // Lush British garden green
-          gGrad.addColorStop(0.85, '#14532d'); // Deep evergreen sod
-          gGrad.addColorStop(1.0, '#0f3d1e'); // Rich forest edge
+          // A. Fresh Spring Emerald botanical lawn base (Vibrant & lush, no dark seam tones)
+          const gGrad = gctx.createLinearGradient(0, 0, turfSize, turfSize);
+          gGrad.addColorStop(0.0, '#1cb852'); // Bright vibrant chlorophyll
+          gGrad.addColorStop(0.5, '#16a34a'); // Fresh English lawn green
+          gGrad.addColorStop(1.0, '#15803d'); // Balanced natural meadow green
           gctx.fillStyle = gGrad;
           gctx.fillRect(0, 0, turfSize, turfSize);
 
-          rctx.fillStyle = '#9e9e9e'; // Soft velvet roughness base
+          rctx.fillStyle = '#8f8f8f'; // Soft velvet roughness
           rctx.fillRect(0, 0, turfSize, turfSize);
 
-          aoCtx.fillStyle = '#6b7280'; // Base ambient occlusion
+          aoCtx.fillStyle = '#7a7a7a'; // Clean open ambient base (no dark seam shadows)
           aoCtx.fillRect(0, 0, turfSize, turfSize);
 
           for (let i = 0; i < turfSize * turfSize; i++) {
-            heightData[i] = 0.45;
+            heightData[i] = 0.5;
           }
 
-          // B. Soft Organic Cellular Clump Cushions (Voronoi-inspired velvet grass cushions)
+          // B. Soft Velvet Micro-Dapples & Cushions (Pure soft circles, ZERO lines or strokes)
           const clumpTones = [
-            'rgba(34, 197, 94, 0.32)',   // Spring emerald
-            'rgba(22, 163, 74, 0.38)',   // Vibrant chlorophyll
-            'rgba(21, 128, 61, 0.35)',   // Lush meadow
-            'rgba(74, 222, 128, 0.22)'   // Sunlit warm highlight
+            'rgba(34, 197, 94, 0.35)',   // Spring emerald
+            'rgba(74, 222, 128, 0.28)',  // Fresh sunlit green
+            'rgba(22, 163, 74, 0.32)',   // Lush grass
+            'rgba(52, 211, 153, 0.22)',  // Minty freshness
+            'rgba(163, 230, 53, 0.18)'   // Warm lime highlight
           ];
 
-          const numClumps = 180;
+          const numClumps = 320;
           for (let c = 0; c < numClumps; c++) {
             const cx = Math.random() * turfSize;
             const cy = Math.random() * turfSize;
-            const radius = 20 + Math.random() * 32;
+            const radius = 25 + Math.random() * 55;
 
             // Albedo soft radial grass patch
-            const cGrad = gctx.createRadialGradient(cx, cy, 3, cx, cy, radius);
+            const cGrad = gctx.createRadialGradient(cx, cy, 2, cx, cy, radius);
             cGrad.addColorStop(0.0, clumpTones[c % clumpTones.length]);
-            cGrad.addColorStop(0.65, 'rgba(21, 128, 61, 0.18)');
+            cGrad.addColorStop(0.7, 'rgba(34, 197, 94, 0.12)');
             cGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
             gctx.fillStyle = cGrad;
             gctx.beginPath();
@@ -2585,8 +2585,8 @@
 
             // Roughness satin highlight in center of clumps
             const rGrad = rctx.createRadialGradient(cx, cy, 2, cx, cy, radius);
-            rGrad.addColorStop(0.0, 'rgba(80, 80, 80, 0.4)');
-            rGrad.addColorStop(1.0, 'rgba(160, 160, 160, 0)');
+            rGrad.addColorStop(0.0, 'rgba(70, 70, 70, 0.3)');
+            rGrad.addColorStop(1.0, 'rgba(150, 150, 150, 0)');
             rctx.fillStyle = rGrad;
             rctx.beginPath();
             rctx.arc(cx, cy, radius, 0, Math.PI * 2);
@@ -2594,14 +2594,14 @@
 
             // AO ambient bounce on cushion peaks
             const aoGrad = aoCtx.createRadialGradient(cx, cy, 2, cx, cy, radius);
-            aoGrad.addColorStop(0.0, 'rgba(230, 230, 230, 0.4)');
-            aoGrad.addColorStop(1.0, 'rgba(100, 100, 100, 0)');
+            aoGrad.addColorStop(0.0, 'rgba(240, 240, 240, 0.35)');
+            aoGrad.addColorStop(1.0, 'rgba(120, 120, 120, 0)');
             aoCtx.fillStyle = aoGrad;
             aoCtx.beginPath();
             aoCtx.arc(cx, cy, radius, 0, Math.PI * 2);
             aoCtx.fill();
 
-            // Height dome
+            // Height dome (soft, gentle elevation)
             const r2 = radius * radius;
             const minX = Math.max(0, Math.floor(cx - radius));
             const maxX = Math.min(turfSize - 1, Math.ceil(cx + radius));
@@ -2615,36 +2615,28 @@
                 if (d2 < r2) {
                   const factor = Math.cos((Math.sqrt(d2) / radius) * (Math.PI * 0.5));
                   const idx = y * turfSize + x;
-                  heightData[idx] = Math.min(1.0, heightData[idx] + factor * 0.22);
+                  heightData[idx] = Math.min(1.0, heightData[idx] + factor * 0.12);
                 }
               }
             }
           }
 
-          // C. Delicate Micro-Velvet Blade Fibers (Soft & perfectly blended, not harsh needles)
-          const softBlades = ['#16a34a', '#22c55e', '#15803d', '#4ade80'];
-          for (let f = 0; f < 1800; f++) {
+          // C. Micro-Velvet Cellular Flecks (Soft circular dapples, absolutely no linear strokes)
+          const fleckTones = ['#4ade80', '#22c55e', '#86efac', '#16a34a'];
+          for (let f = 0; f < 2500; f++) {
             const fx = Math.random() * turfSize;
             const fy = Math.random() * turfSize;
-            const flen = 5 + Math.random() * 9;
-            const fang = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
-            gctx.strokeStyle = softBlades[Math.floor(Math.random() * softBlades.length)];
-            gctx.globalAlpha = 0.22 + Math.random() * 0.18;
-            gctx.lineWidth = 1.2 + Math.random() * 1.0;
+            const fr = 1.0 + Math.random() * 2.2;
+            gctx.fillStyle = fleckTones[Math.floor(Math.random() * fleckTones.length)];
+            gctx.globalAlpha = 0.25 + Math.random() * 0.25;
             gctx.beginPath();
-            gctx.moveTo(fx, fy);
-            gctx.quadraticCurveTo(
-              fx + Math.cos(fang) * (flen * 0.5) + (Math.random() - 0.5) * 4,
-              fy + Math.sin(fang) * (flen * 0.5),
-              fx + Math.cos(fang) * flen,
-              fy + Math.sin(fang) * flen
-            );
-            gctx.stroke();
+            gctx.arc(fx, fy, fr, 0, Math.PI * 2);
+            gctx.fill();
           }
           gctx.globalAlpha = 1.0;
 
-          // D. Alpine Spring Meadow Micro-Flowers & Dew Specks
-          for (let fl = 0; fl < 75; fl++) {
+          // D. Alpine Spring Meadow Micro-Flowers & Dew Drops
+          for (let fl = 0; fl < 85; fl++) {
             const mx = Math.random() * turfSize;
             const my = Math.random() * turfSize;
             const ftype = fl % 3;
@@ -2652,23 +2644,23 @@
               // Tiny White Daisy Star
               gctx.fillStyle = '#ffffff';
               gctx.beginPath();
-              gctx.arc(mx, my, 1.6, 0, Math.PI * 2);
+              gctx.arc(mx, my, 1.8, 0, Math.PI * 2);
               gctx.fill();
               gctx.fillStyle = '#facc15';
               gctx.beginPath();
-              gctx.arc(mx, my, 0.7, 0, Math.PI * 2);
+              gctx.arc(mx, my, 0.8, 0, Math.PI * 2);
               gctx.fill();
             } else if (ftype === 1) {
-              // Tiny Golden Buttercup Dot
+              // Tiny Golden Buttercup
               gctx.fillStyle = '#fbbf24';
               gctx.beginPath();
-              gctx.arc(mx, my, 1.4, 0, Math.PI * 2);
+              gctx.arc(mx, my, 1.5, 0, Math.PI * 2);
               gctx.fill();
             } else {
-              // Morning Dew Drop
-              gctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+              // Tiny Morning Dew Drop
+              gctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
               gctx.beginPath();
-              gctx.arc(mx, my, 1.2, 0, Math.PI * 2);
+              gctx.arc(mx, my, 1.3, 0, Math.PI * 2);
               gctx.fill();
               rctx.fillStyle = '#111111';
               rctx.beginPath();
@@ -2677,10 +2669,10 @@
             }
           }
 
-          // E. Smooth Sobel Normal Map (Velvety pillows, no harsh noise)
+          // E. Smooth Sobel Normal Map (Gentle macro velvet sheen, no harsh relief)
           const normalImgData = nctx.createImageData(turfSize, turfSize);
           const ndata = normalImgData.data;
-          const normalStrength = 1.35; // Soft natural contour
+          const normalStrength = 1.1;
           for (let y = 0; y < turfSize; y++) {
             const ym1 = (y - 1 + turfSize) % turfSize;
             const yp1 = (y + 1) % turfSize;
@@ -2715,22 +2707,22 @@
           }
           nctx.putImageData(normalImgData, 0, 0);
 
-          // Build Seamless PBR Textures
+          // Build Completely Seamless 1:1 PBR Textures (NO repeating grid seams!)
           const lawnTexture = new THREE.CanvasTexture(gCanvas);
-          lawnTexture.wrapS = lawnTexture.wrapT = THREE.RepeatWrapping;
-          lawnTexture.repeat.set(3, 3);
+          lawnTexture.wrapS = lawnTexture.wrapT = THREE.ClampToEdgeWrapping;
+          lawnTexture.repeat.set(1, 1);
 
           const lawnNormalTexture = new THREE.CanvasTexture(normalCanvas);
-          lawnNormalTexture.wrapS = lawnNormalTexture.wrapT = THREE.RepeatWrapping;
-          lawnNormalTexture.repeat.set(3, 3);
+          lawnNormalTexture.wrapS = lawnNormalTexture.wrapT = THREE.ClampToEdgeWrapping;
+          lawnNormalTexture.repeat.set(1, 1);
 
           const lawnRoughTexture = new THREE.CanvasTexture(roughCanvas);
-          lawnRoughTexture.wrapS = lawnRoughTexture.wrapT = THREE.RepeatWrapping;
-          lawnRoughTexture.repeat.set(3, 3);
+          lawnRoughTexture.wrapS = lawnRoughTexture.wrapT = THREE.ClampToEdgeWrapping;
+          lawnRoughTexture.repeat.set(1, 1);
 
           const lawnAoTexture = new THREE.CanvasTexture(aoCanvas);
-          lawnAoTexture.wrapS = lawnAoTexture.wrapT = THREE.RepeatWrapping;
-          lawnAoTexture.repeat.set(3, 3);
+          lawnAoTexture.wrapS = lawnAoTexture.wrapT = THREE.ClampToEdgeWrapping;
+          lawnAoTexture.repeat.set(1, 1);
 
           const lawnGeom = new THREE.BoxGeometry(20.8, 1.0, 20.8);
           lawnGeom.setAttribute('uv2', lawnGeom.attributes.uv);
@@ -2738,50 +2730,45 @@
           const lawnMat = new THREE.MeshStandardMaterial({
             map: lawnTexture,
             normalMap: lawnNormalTexture,
-            normalScale: new THREE.Vector2(0.65, 0.65), // Soft velvety 3D sheen
+            normalScale: new THREE.Vector2(0.18, 0.18), // Ultra-soft velvety sheen
             roughnessMap: lawnRoughTexture,
-            roughness: 0.58,
+            roughness: 0.55,
             metalness: 0.02,
             aoMap: lawnAoTexture,
-            aoMapIntensity: 0.65
+            aoMapIntensity: 0.35
           });
           const lawn = new THREE.Mesh(lawnGeom, lawnMat);
           lawn.position.y = -0.5;
           lawn.receiveShadow = true;
           this.islandGroup.add(lawn);
 
-          // 2. Charming 3D Volumetric Grass Tufts (Softly ringing perimeter & accenting meadow)
+          // 2. Charming 3D Volumetric Grass Tufts (Softly framing island border edges only)
           this.grassTuftsGroup = new THREE.Group();
-          const tuftBladeGeom = new THREE.ConeGeometry(0.05, 0.42, 4);
+          const tuftBladeGeom = new THREE.ConeGeometry(0.045, 0.42, 4);
           tuftBladeGeom.translate(0, 0.21, 0);
           const tuftMat = new THREE.MeshStandardMaterial({
             color: 0x22c55e,
-            roughness: 0.38,
+            roughness: 0.35,
             metalness: 0.02
           });
-          for (let t = 0; t < 90; t++) {
+          for (let t = 0; t < 64; t++) {
             const tuft = new THREE.Group();
+            const side = t % 4;
+            const off = (Math.random() - 0.5) * 19.4;
             let tx, tz;
-            if (t < 60) {
-              // Densely softening the perimeter border curb
-              const side = t % 4;
-              const off = (Math.random() - 0.5) * 19.2;
-              if (side === 0) { tx = off; tz = 9.8 + (Math.random() - 0.5) * 0.5; }
-              else if (side === 1) { tx = off; tz = -9.8 + (Math.random() - 0.5) * 0.5; }
-              else if (side === 2) { tx = 9.8 + (Math.random() - 0.5) * 0.5; tz = off; }
-              else { tx = -9.8 + (Math.random() - 0.5) * 0.5; tz = off; }
-            } else {
-              tx = (Math.random() - 0.5) * 17.5;
-              tz = (Math.random() - 0.5) * 17.5;
-            }
+            if (side === 0) { tx = off; tz = 9.85 + (Math.random() - 0.5) * 0.4; }
+            else if (side === 1) { tx = off; tz = -9.85 + (Math.random() - 0.5) * 0.4; }
+            else if (side === 2) { tx = 9.85 + (Math.random() - 0.5) * 0.4; tz = off; }
+            else { tx = -9.85 + (Math.random() - 0.5) * 0.4; tz = off; }
+
             tuft.position.set(tx, 0.01, tz);
-            for (let b = 0; b < 6; b++) {
+            for (let b = 0; b < 5; b++) {
               const blade = new THREE.Mesh(tuftBladeGeom, tuftMat);
               blade.castShadow = true;
-              const bAngle = (b * Math.PI * 2) / 6 + Math.random() * 0.3;
+              const bAngle = (b * Math.PI * 2) / 5 + Math.random() * 0.3;
               blade.rotation.y = bAngle;
-              blade.rotation.z = 0.26 + Math.random() * 0.22;
-              blade.scale.set(1, 0.8 + Math.random() * 0.5, 1);
+              blade.rotation.z = 0.24 + Math.random() * 0.2;
+              blade.scale.set(1, 0.8 + Math.random() * 0.45, 1);
               tuft.add(blade);
             }
             this.grassTuftsGroup.add(tuft);
