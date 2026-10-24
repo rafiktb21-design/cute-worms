@@ -2541,19 +2541,19 @@
 
           const heightData = new Float32Array(turfSize * turfSize);
 
-          // A. Rich Vibrant Emerald Garden Turf Base (Intensely Greener, Fresh, & Sunlit)
+          // A. Ultra-Lush Radiant Emerald Meadow Turf Base (Intensely Greener, Luminous, & Saturated)
           const gGrad = gctx.createLinearGradient(0, 0, turfSize, turfSize);
-          gGrad.addColorStop(0.0, '#22c55e'); // Vivid spring emerald
-          gGrad.addColorStop(0.35, '#16a34a'); // Lush chlorophyll meadow
-          gGrad.addColorStop(0.7, '#15803d'); // Rich deep turf
-          gGrad.addColorStop(1.0, '#166534'); // Royal garden green
+          gGrad.addColorStop(0.0, '#2ebd59'); // Radiant spring emerald
+          gGrad.addColorStop(0.3, '#22c55e'); // Vivid chlorophyll green
+          gGrad.addColorStop(0.7, '#16a34a'); // Rich lush English lawn
+          gGrad.addColorStop(1.0, '#15803d'); // Deep vibrant meadow grass (no dark muddy tones)
           gctx.fillStyle = gGrad;
           gctx.fillRect(0, 0, turfSize, turfSize);
 
-          rctx.fillStyle = '#8f8f8f'; // Soft velvet roughness
+          rctx.fillStyle = '#858585'; // Soft velvet roughness
           rctx.fillRect(0, 0, turfSize, turfSize);
 
-          aoCtx.fillStyle = '#7a7a7a'; // Clean open ambient base (no dark seam shadows)
+          aoCtx.fillStyle = '#8c8c8c'; // Clean bright ambient base (prevents grass from darkening into gray)
           aoCtx.fillRect(0, 0, turfSize, turfSize);
 
           for (let i = 0; i < turfSize * turfSize; i++) {
@@ -2562,11 +2562,11 @@
 
           // B. Soft Velvet Micro-Dapples & Cushions (Pure soft circles, ZERO lines or strokes)
           const clumpTones = [
-            'rgba(34, 197, 94, 0.48)',   // Vibrant emerald green
-            'rgba(74, 222, 128, 0.40)',  // Bright sunlit foliage
-            'rgba(22, 163, 74, 0.42)',   // Deep fresh grass
-            'rgba(52, 211, 153, 0.30)',  // Minty freshness
-            'rgba(163, 230, 53, 0.25)'   // Lime-sunlight warmth
+            'rgba(34, 197, 94, 0.62)',   // Ultra-vivid emerald green
+            'rgba(74, 222, 128, 0.52)',  // Bright luminous spring grass
+            'rgba(37, 211, 102, 0.56)',  // Radiant fresh meadow green
+            'rgba(52, 211, 153, 0.40)',  // Fresh minty chlorophyll
+            'rgba(163, 230, 53, 0.35)'   // Warm sunlit lime-green glow
           ];
 
           const numClumps = 320;
@@ -2578,7 +2578,7 @@
             // Albedo soft radial grass patch
             const cGrad = gctx.createRadialGradient(cx, cy, 2, cx, cy, radius);
             cGrad.addColorStop(0.0, clumpTones[c % clumpTones.length]);
-            cGrad.addColorStop(0.7, 'rgba(34, 197, 94, 0.16)');
+            cGrad.addColorStop(0.7, 'rgba(34, 197, 94, 0.22)');
             cGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
             gctx.fillStyle = cGrad;
             gctx.beginPath();
@@ -2624,13 +2624,13 @@
           }
 
           // C. Micro-Velvet Cellular Flecks (Soft circular dapples, absolutely no linear strokes)
-          const fleckTones = ['#22c55e', '#4ade80', '#16a34a', '#86efac', '#15803d'];
-          for (let f = 0; f < 2500; f++) {
+          const fleckTones = ['#22c55e', '#4ade80', '#2ebd59', '#16a34a', '#86efac', '#34d399', '#a3e635'];
+          for (let f = 0; f < 3200; f++) {
             const fx = Math.random() * turfSize;
             const fy = Math.random() * turfSize;
             const fr = 1.0 + Math.random() * 2.2;
             gctx.fillStyle = fleckTones[Math.floor(Math.random() * fleckTones.length)];
-            gctx.globalAlpha = 0.28 + Math.random() * 0.28;
+            gctx.globalAlpha = 0.35 + Math.random() * 0.30;
             gctx.beginPath();
             gctx.arc(fx, fy, fr, 0, Math.PI * 2);
             gctx.fill();
@@ -2731,14 +2731,14 @@
 
           const lawnMat = new THREE.MeshStandardMaterial({
             map: lawnTexture,
-            color: 0x86efac, // Vibrant spring chlorophyll multiplier tint for an intensely fresh green lawn
+            color: 0xffffff, // 100% full luminous transmission of rich emerald greens
             normalMap: lawnNormalTexture,
-            normalScale: new THREE.Vector2(0.15, 0.15), // Ultra-soft velvety sheen
+            normalScale: new THREE.Vector2(0.12, 0.12), // Ultra-soft velvety sheen
             roughnessMap: lawnRoughTexture,
-            roughness: 0.50,
+            roughness: 0.44, // Refined satin grass sheen for luminous sunlight reflection
             metalness: 0.01,
             aoMap: lawnAoTexture,
-            aoMapIntensity: 0.28
+            aoMapIntensity: 0.15 // Gentle AO to keep the meadow radiantly green and fresh
           });
           const lawn = new THREE.Mesh(lawnGeom, lawnMat);
           lawn.position.y = -0.5;
@@ -2750,9 +2750,9 @@
           const tuftBladeGeom = new THREE.ConeGeometry(0.045, 0.42, 4);
           tuftBladeGeom.translate(0, 0.21, 0);
           const tuftMat = new THREE.MeshStandardMaterial({
-            color: 0x22c55e,
-            roughness: 0.35,
-            metalness: 0.02
+            color: 0x2ebd59, // Radiant spring emerald grass tuft blades
+            roughness: 0.30,
+            metalness: 0.01
           });
           for (let t = 0; t < 64; t++) {
             const tuft = new THREE.Group();
@@ -3495,7 +3495,7 @@
 
           const nwGrass = new THREE.Mesh(
             new THREE.CylinderGeometry(4.2, 4.0, 0.9, 14),
-            new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.6 })
+            new THREE.MeshStandardMaterial({ color: 0x2ebd59, roughness: 0.48 })
           );
           nwGrass.receiveShadow = true;
           this.nwIsland.add(nwGrass);
@@ -3622,7 +3622,7 @@
 
           const neGrass = new THREE.Mesh(
             new THREE.CylinderGeometry(4.0, 3.8, 0.9, 14),
-            new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.6 })
+            new THREE.MeshStandardMaterial({ color: 0x2ebd59, roughness: 0.48 })
           );
           neGrass.receiveShadow = true;
           this.neIsland.add(neGrass);
